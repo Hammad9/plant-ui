@@ -1,12 +1,16 @@
-import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity, FlatList, Dimensions ,Image} from 'react-native'
 import React from 'react'
 import COLORS from '../consts/colors'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Button } from 'react-native-paper'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { MaterialIcons } from '@expo/vector-icons';
+import plants from '../consts/plants';
+const width = Dimensions.get("screen").width / 2 - 30;
+import { AntDesign } from '@expo/vector-icons';
 
-const Home = () => {
+
+const Home = ({navigation}) => {
   const catagories = ["Popular", "Organics", "Indoors", "Syntehtics"]
 
   const [categoryIndex, setCategoryIndex] = React.useState(0);
@@ -28,6 +32,41 @@ const Home = () => {
       </View>
     )
   }
+
+  const Card = ({ plant }) => {
+    return <TouchableOpacity onPress={()=>navigation.navigate('Details',plant)}>
+    <View style={styles.cardItem}>
+      <View style={{ alignItems: 'flex-end' }}>
+        <View style={{
+          width: 30,
+          height: 30,
+          borderRadius: 15,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: plant.like ? 'rgba(245,42,42,0.2)' : 'rgba(0,0,0,0.2)'
+        }}>
+          <AntDesign
+            name="heart"
+            size={18}
+            color={plant.like ? COLORS.red : COLORS.dark}
+          />
+        </View>
+      </View>
+      <View style={{height:100,alignItems:'center'}}>
+          <Image style={{flex:1,resizeMode:'contain'}} source={plant.img} />
+      </View>
+      <View>
+        <Text style={{fontWeight:'bold',fontSize:17,marginTop:10,}}>{plant.name}</Text>
+      </View>
+      <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:5}}>
+        <Text style={{fontWeight:'bold',fontSize:18,}}>${plant.price}</Text>
+        <Ionicons name="add-circle-sharp" size={24} color="green" />
+      </View>
+    </View>
+    </TouchableOpacity>
+    
+  }
+
   return (
     <SafeAreaView
       style={{ flex: 1, paddingHorizontal: 20, backgroundColor: COLORS.white }} >
@@ -48,8 +87,18 @@ const Home = () => {
           <MaterialIcons name="sort" size={30} color="white" />
         </View>
       </View>
-      <ListCatagory>
-      </ListCatagory>
+      <ListCatagory />
+      <FlatList
+        columnWrapperStyle={{ justifyContent: 'space-between' }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          marginTop: 10,
+          paddingBottom: 50,
+        }}
+        numColumns={2}
+        data={plants}
+        renderItem={({ item }) => <Card plant={item} />}
+      />
     </SafeAreaView>
   )
 }
@@ -101,5 +150,14 @@ const styles = StyleSheet.create({
     color: 'green',
     borderBottomWidth: 2,
     paddingBottom: 10,
-  }
+  },
+  cardItem: {
+    height: 225,
+    backgroundColor: COLORS.light,
+    width,
+    marginHorizontal: 2,
+    marginBottom: 20,
+    padding: 15,
+  },
+
 })
